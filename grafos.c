@@ -5,12 +5,14 @@
 
 int num_nodes = 0;
 
+
+
 typedef struct no { 
 	int vertice;
 	struct no *prox;
 } nodes;
 
-typedef nodes *ponteiro;
+nodes list[10000];
 
 int tamanho (int num_nodes) {
 	printf("\n");
@@ -59,19 +61,42 @@ void create_matrix(int matriz[num_nodes][num_nodes], int num_nodes, float sparsi
 	}
 }
 
-void create_list(ponteiro list[num_nodes], int num_nodes, float sparsity){
+void inserir_aresta(nodes *list,int node, int node_adjacente) {
+	nodes *aux;
+	nodes *tmp;
+ 
+	aux = (nodes*) malloc((int)sizeof(nodes)); 
+	aux->vertice = node_adjacente;
+	aux->prox = NULL;
+	list[node].vertice++;
+	if(list[node].prox == NULL)	
+    list[node].prox = aux;
+	else {
+		tmp = list[node].prox;
+		if (tmp->vertice > node_adjacente) { 
+			aux->prox = tmp;
+			list[node].prox = aux;
+		} 		 
+		else if (tmp->prox == NULL) { 
+			aux->prox = tmp->prox;
+			tmp->prox = aux;  
+		}
+		else {
+			while((tmp->prox != NULL) &&(tmp->prox->vertice < node_adjacente)) {
+				tmp = tmp->prox;
+			}
+			aux->prox = tmp->prox;
+			tmp->prox = aux;  
+			}
+	}
+}
+
+void create_list(nodes *list, int num_nodes, float sparsity){
 	for (int node = 0; node < num_nodes; node++) {
-		for (int node_adjacente = node + 1; node_adjacente < num_nodes; node_adjacente++) {
+		for (int node_adjacente = (node + 1); node_adjacente < num_nodes; node_adjacente++) {
 			if(create_binary(sparsity) == 1) {
-				ponteiro aux;
-				aux = (nodes *) malloc(sizeof(nodes));
-				aux->vertice = node_adjacente;
-				aux->prox = NULL;
-				list[node]->prox = aux;
-				
-				aux->vertice = node;
-				aux->prox = NULL;
-				list[node_adjacente]->prox = aux;
+				inserir_aresta(&list[node], node, node_adjacente);
+				inserir_aresta(&list[node_adjacente], node_adjacente, node);
 			}
 		}
 	}
@@ -91,17 +116,21 @@ void exibir_matriz(int tamanhoGrafo, int Matriz[tamanhoGrafo][tamanhoGrafo]) {
 	}
 }
 
-void exibir_list(ponteiro *aux) {
-	
-	
-	
-	while (aux->prox != NULL) {
-		printf(" -> %d",aux->prox->vertice);
+void exibir_list(nodes *lista, int num_nodes) {
+	nodes * tmp;
+	for(int index = 0; index < num_nodes; index++) {
+		tmp = lista[index].prox;
+		printf("%2d: (%d) ->", index, lista[index].vertice);
+		while (tmp != NULL) {
+			printf("%d  ", tmp->vertice);
+			tmp = tmp->prox;
+		}
+		printf("\n");
 	}
 }
 
 
-void busca_grafo_simples(ponteiro list[num_nodes],int num_nodes,float sparsity) {
+void busca_grafo_simples(nodes list[num_nodes],int num_nodes,float sparsity) {
 	int opcao;
 	printf("\n");
 	printf("1. exibir o grafo. \n2. para BFS. \n3. para DFS. \n0. para sair.\nDigite uma das opções acima: ");
@@ -109,28 +138,20 @@ void busca_grafo_simples(ponteiro list[num_nodes],int num_nodes,float sparsity) 
 	do {
 		if (opcao != 0) {
 			if (opcao == 1) {
-				
-				for(int index = 0; index <num_nodes; index++) {
-					printf("\n");
-					printf("%d :", index);
-					exibir_list(&list[index]);
-				}
-				//exibir grafo
-				busca_grafo_simples(list, num_nodes, sparsity);
+				exibir_list(list, num_nodes);
 			}
 			if (opcao == 2) {
+				printf("\n\nGrafo originalmente armazenado.\n\n");
+				exibir_list(list, num_nodes);
 				//BFS
-				busca_grafo_simples(list, num_nodes, sparsity);
 			}
 			if (opcao == 3) {
+				printf("\n\nGrafo originalmente armazenado.\n\n");
+				exibir_list(list, num_nodes);
 				//DFS
-				busca_grafo_simples(list, num_nodes, sparsity);
-			}
-			else {
-				busca_grafo_simples(list, num_nodes, sparsity);
 			}
 		}
-	} while (opcao != 0);
+	} while (opcao == 0);
 }
 
 int main() {
@@ -152,10 +173,10 @@ int main() {
 				}
 				if (opcao == 2) {
 					sparsity = 0.3;
-					ponteiro list[num_nodes];
-					list[0] = (nodes *) malloc(sizeof(nodes));
-					list[0]->vertice = 0;
-					list[0]->prox = NULL;
+					for(int i=0; i < num_nodes; i++){
+						list[i].vertice = 0;
+						list[i].prox = NULL;
+					}
 					create_list(list, num_nodes, sparsity);
 					busca_grafo_simples(list, num_nodes, sparsity);
 				}
