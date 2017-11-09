@@ -7,7 +7,7 @@ int num_nodes = 0;
 
 
 
-typedef struct no { 
+typedef struct no {
 	int vertice;
 	struct no *prox;
 } nodes;
@@ -63,29 +63,29 @@ void create_matrix(int matriz[num_nodes][num_nodes], int num_nodes, float sparsi
 void inserir_aresta(nodes *list, int node_adjacente) {
 	nodes *aux;
 	nodes *tmp;
- 
-	aux = (nodes*) malloc((int)sizeof(nodes)); 
+
+	aux = (nodes*) malloc((int)sizeof(nodes));
 	aux->vertice = node_adjacente;
 	aux->prox = NULL;
-	list.vertice++;
-	if(list.prox == NULL)	
-	list.prox = aux;
+	list->vertice++;
+	if(list->prox == NULL)
+	list->prox = aux;
 	else {
-		tmp = list.prox;
-		if (tmp->vertice > node_adjacente) { 
+		tmp = list->prox;
+		if (tmp->vertice > node_adjacente) {
 			aux->prox = tmp;
-			list.prox = aux;
-		} 		 
-		else if (tmp->prox == NULL) { 
+			list->prox = aux;
+		}
+		else if (tmp->prox == NULL) {
 			aux->prox = tmp->prox;
-			tmp->prox = aux;  
+			tmp->prox = aux;
 		}
 		else {
 			while((tmp->prox != NULL) &&(tmp->prox->vertice < node_adjacente)) {
 				tmp = tmp->prox;
 			}
 			aux->prox = tmp->prox;
-			tmp->prox = aux;  
+			tmp->prox = aux;
 		}
 	}
 }
@@ -107,7 +107,7 @@ void exibir_matriz(int tamanhoGrafo, int Matriz[tamanhoGrafo][tamanhoGrafo]) {
 		printf("\n");
 		for (linha = 0; linha < tamanhoGrafo; linha ++) {
 			if (linha == 0) {
-				printf("| %d |", Matriz[coluna][linha]);	
+				printf("| %d |", Matriz[coluna][linha]);
 			} else {
 				printf(" %d |", Matriz[coluna][linha]);
 			}
