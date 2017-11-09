@@ -37,7 +37,6 @@ int tipo_grafo(int opcao) {
 }
 
 int create_binary(float sparsity) {
-	srand((unsigned int)time(NULL));
 	int r = rand();
 	if(r < RAND_MAX * sparsity) {
         	return 1;
@@ -61,21 +60,21 @@ void create_matrix(int matriz[num_nodes][num_nodes], int num_nodes, float sparsi
 	}
 }
 
-void inserir_aresta(nodes *list,int node, int node_adjacente) {
+void inserir_aresta(nodes *list, int node_adjacente) {
 	nodes *aux;
 	nodes *tmp;
  
 	aux = (nodes*) malloc((int)sizeof(nodes)); 
 	aux->vertice = node_adjacente;
 	aux->prox = NULL;
-	list[node].vertice++;
-	if(list[node].prox == NULL)	
+	list.vertice++;
+	if(list.prox == NULL)	
 	list[node].prox = aux;
 	else {
-		tmp = list[node].prox;
+		tmp = list.prox;
 		if (tmp->vertice > node_adjacente) { 
 			aux->prox = tmp;
-			list[node].prox = aux;
+			list.prox = aux;
 		} 		 
 		else if (tmp->prox == NULL) { 
 			aux->prox = tmp->prox;
@@ -95,8 +94,8 @@ void create_list(nodes *list, int num_nodes, float sparsity){
 	for (int node = 0; node < num_nodes; node++) {
 		for (int node_adjacente = (node + 1); node_adjacente < num_nodes; node_adjacente++) {
 			if(create_binary(sparsity) == 1) {
-				inserir_aresta(&list[node], node, node_adjacente);
-				inserir_aresta(&list[node_adjacente], node_adjacente, node);
+				inserir_aresta(&list[node], node_adjacente);
+				inserir_aresta(&list[node_adjacente], node);
 			}
 		}
 	}
@@ -155,6 +154,7 @@ void busca_grafo_simples(nodes list[num_nodes],int num_nodes,float sparsity) {
 }
 
 int main() {
+	srand((unsigned int)time(NULL));
 	int opcao = 0;
 	float sparsity;
 	do {
