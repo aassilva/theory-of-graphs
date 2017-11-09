@@ -70,7 +70,7 @@ void inserir_aresta(nodes *list,int node, int node_adjacente) {
 	aux->prox = NULL;
 	list[node].vertice++;
 	if(list[node].prox == NULL)	
-    list[node].prox = aux;
+	list[node].prox = aux;
 	else {
 		tmp = list[node].prox;
 		if (tmp->vertice > node_adjacente) { 
@@ -87,7 +87,7 @@ void inserir_aresta(nodes *list,int node, int node_adjacente) {
 			}
 			aux->prox = tmp->prox;
 			tmp->prox = aux;  
-			}
+		}
 	}
 }
 
