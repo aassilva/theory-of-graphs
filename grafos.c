@@ -150,8 +150,20 @@ void insere_fila(lista_busca *fila, int raiz){
 	tmp->prox = novo;
 }
 
+void retira_node(lista_busca *fila, int vertice) {
+    lista_busca *tmp;
+    tmp = fila;
+    while (tmp->prox != NULL) {
+        if (tmp->num == vertice) {
+            free(tmp);
+        }
+    }
+}
+
 void bfs_busca(nodes list[num_nodes], int num_nodes, int raiz) {
 	lista_busca *fila;
+	nodes *aux;
+	nodes *tmp;
 	fila = (lista_busca*) malloc((int)sizeof(lista_busca));
 	int matriz[num_nodes][2], vertice_selecionado;
 	for (int linha = 0; linha < num_nodes; linha++) {
@@ -160,16 +172,31 @@ void bfs_busca(nodes list[num_nodes], int num_nodes, int raiz) {
 		}
 	}
 	fila->prox = NULL;
-	
+
 	insere_fila(fila, raiz);
 	matriz[raiz][1] = 1;  //teg.
 	matriz[raiz][2] = -1; //antecessor.
 
-	/*while (!vazia(FILA)) {
-		vertice-selecionado = FILA->num;
+	while (fila->prox != NULL) {
+        vertice_selecionado = fila->num;
+        retira_node(fila, vertice_selecionado);
+        tmp = list[vertice_selecionado].prox;
+        while (tmp->prox != NULL) {
+            int temp = tmp->vertice;
+            if(matriz[temp] [1] == 0) {
+                insere_fila(fila, temp);
+                matriz[temp][1] = 1;  //teg.
+                matriz[temp][2] = vertice_selecionado; //antecessor.
+            }
+            tmp = tmp->prox;
+        }
+	}
 
-	}*/
-	
+	printf("\n\n Árvore gerada.\n\n");
+	for (int linha = 0; linha < num_nodes; linha++) {
+        printf("Vertice: %d - antecessor: %d\n", linha, matriz[linha][2]);
+    }
+
 }
 
 
