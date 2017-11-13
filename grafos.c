@@ -137,37 +137,47 @@ void exibir_list(nodes *lista, int num_nodes) {
 }
 
 //Código para as buscas.
-void insere_fila(lista_busca *fila, int raiz){
+void insere_fila(lista_busca **fila, int raiz){
 	lista_busca *novo = (lista_busca*) malloc((int)sizeof(lista_busca));
 	novo->prox = NULL;
 	novo->num = raiz;
-	lista_busca *tmp = fila->prox;
+	lista_busca *tmp = (*fila);
 
-	while (tmp->prox != NULL) {
-		tmp = tmp->prox;
+	if (*fila == NULL){
+		*fila = novo;
+	} else {
+		while (tmp->prox != NULL) tmp = tmp->prox;
+		
+		tmp->prox = novo;
 	}
 
-	tmp->prox = novo;
 }
 
-void retira_node(lista_busca *fila, int vertice) {
+void retira_node(lista_busca **fila) {
     lista_busca *tmp;
-    tmp = fila->prox;
-    while (tmp->prox != NULL) {
-        if (tmp->num == vertice) {
-			fila = tmp->prox;
-            free(tmp);
-        }
-        tmp = tmp->prox;
-    }
+    tmp = *fila;
+    
+    *fila = (*fila)->prox;
+    
+    free(tmp);
+}
+
+void mostra (lista_busca *fila){
+	if (fila!=NULL){
+		while (fila!=NULL){
+			printf ("%d\t",fila->num);
+			fila = fila->prox;
+		}
+	} else printf ("VAZIO");
+	
+	printf ("\n\n");
+	
 }
 
 void bfs_busca(nodes *lista, int num_nodes, int raiz) {
 	lista_busca *fila;
-	lista_busca *tmp;
 	nodes *aux;
-	fila = (lista_busca*) malloc((int)sizeof(lista_busca));
-	fila->prox = NULL;
+	fila = NULL;
 	int matriz[num_nodes][2], vertice_selecionado;
 	for (int linha = 0; linha < num_nodes; linha++) {
 		for (int coluna = 0; coluna < 2; coluna++) {
@@ -175,35 +185,36 @@ void bfs_busca(nodes *lista, int num_nodes, int raiz) {
 		}
 	}
 
-	insere_fila(fila, raiz);
-	matriz[raiz][1] = 1;  //teg.
-	matriz[raiz][2] = -1; //antecessor.
+	insere_fila(&fila, raiz);
+	matriz[raiz][0] = 1;  //teg.
+	matriz[raiz][1] = -1; //antecessor.
 
-	tmp = fila->prox;
-	while (tmp != NULL) {
-        vertice_selecionado = tmp->num;
-        retira_node(fila, vertice_selecionado);
+	while (fila != NULL) {
+        vertice_selecionado = fila->num;
+        retira_node(&fila);
         aux = lista[vertice_selecionado].prox;
-        while (aux->prox != NULL) {
+        while (aux != NULL) {
             int temp = aux->vertice;
-            if(matriz[temp] [1] == 0) {
-                insere_fila(fila, temp);
-                matriz[temp][1] = 1;  //teg.
-                matriz[temp][2] = vertice_selecionado; //antecessor.
+            if(matriz[temp][0] == 0) {
+                insere_fila(&fila, temp);
+                matriz[temp][0] = 1;  //teg.
+                matriz[temp][1] = vertice_selecionado; //antecessor.
             }
-            aux = lista[vertice_selecionado].prox;
+            
+            aux = aux->prox;
         }
+        //mostra(fila);
 	}
 
 	printf("\n\n Árvore gerada.\n\n");
 	for (int linha = 0; linha < num_nodes; linha++) {
-        printf("Vertice: %d - antecessor: %d\n", linha, matriz[linha][2]);
+        printf("Vertice: %d - antecessor: %d\n", linha, matriz[linha][1]);
     }
 
 }
 
 
-void busca_grafo_simples(nodes list[num_nodes],int num_nodes) {
+void busca_grafo_simples(nodes *list,int num_nodes) {
 	int opcao;
 	printf("\n");
 	printf("1. exibir o grafo. \n2. para BFS. \n3. para DFS. \n0. para sair.\nDigite uma das opções acima: ");
@@ -254,7 +265,7 @@ int main() {
 					exibir_matriz(num_nodes, matrix);
 				}
 				if (opcao == 2) {
-					sparsity = 0.3;
+					sparsity = 0.5;
 					for(int i=0; i < num_nodes; i++){
 						list[i].vertice = 0;
 						list[i].prox = NULL;
