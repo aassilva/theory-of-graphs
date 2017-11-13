@@ -152,43 +152,46 @@ void insere_fila(lista_busca *fila, int raiz){
 
 void retira_node(lista_busca *fila, int vertice) {
     lista_busca *tmp;
-    tmp = fila;
+    tmp = fila->prox;
     while (tmp->prox != NULL) {
         if (tmp->num == vertice) {
+			fila = tmp->prox;
             free(tmp);
         }
+        tmp = tmp->prox;
     }
 }
 
-void bfs_busca(nodes list[num_nodes], int num_nodes, int raiz) {
+void bfs_busca(nodes *lista, int num_nodes, int raiz) {
 	lista_busca *fila;
+	lista_busca *tmp;
 	nodes *aux;
-	nodes *tmp;
 	fila = (lista_busca*) malloc((int)sizeof(lista_busca));
+	fila->prox = NULL;
 	int matriz[num_nodes][2], vertice_selecionado;
 	for (int linha = 0; linha < num_nodes; linha++) {
 		for (int coluna = 0; coluna < 2; coluna++) {
 			matriz[linha][coluna] = 0;
 		}
 	}
-	fila->prox = NULL;
 
 	insere_fila(fila, raiz);
 	matriz[raiz][1] = 1;  //teg.
 	matriz[raiz][2] = -1; //antecessor.
 
-	while (fila->prox != NULL) {
-        vertice_selecionado = fila->num;
+	tmp = fila->prox;
+	while (tmp != NULL) {
+        vertice_selecionado = tmp->num;
         retira_node(fila, vertice_selecionado);
-        tmp = list[vertice_selecionado].prox;
-        while (tmp->prox != NULL) {
-            int temp = tmp->vertice;
+        aux = lista[vertice_selecionado].prox;
+        while (aux->prox != NULL) {
+            int temp = aux->vertice;
             if(matriz[temp] [1] == 0) {
                 insere_fila(fila, temp);
                 matriz[temp][1] = 1;  //teg.
                 matriz[temp][2] = vertice_selecionado; //antecessor.
             }
-            tmp = tmp->prox;
+            aux = lista[vertice_selecionado].prox;
         }
 	}
 
