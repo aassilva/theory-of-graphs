@@ -213,9 +213,46 @@ void bfs_busca(nodes *lista, int num_nodes, int raiz) {
 
 }
 
+//DFS
+void dfs_recursivo(nodes *lista, int raiz, int matriz[num_nodes][2]) {
+	nodes *tmp;
+	tmp = &lista[raiz];
+	int aux;
+	matriz[raiz][0] = 1;
+	tmp = tmp->prox;
+	while (tmp != NULL) {
+		printf("passou aqui");
+		if (matriz[tmp->vertice][0] == 0) {
+			
+			aux = tmp->vertice;
+			matriz[aux][1] = raiz;
+			matriz[aux][0] = 1;
+			dfs_recursivo(lista, tmp->vertice, matriz);
+			
+		}
+		tmp = tmp->prox;
+	}
+}
+
+void dfs_busca(nodes *lista, int raiz, int num_nodes) {
+	int matriz[num_nodes][2];
+	for (int linha = 0; linha < num_nodes; linha++) {
+		for (int coluna = 0; coluna < 2; coluna++) {
+			matriz[linha][coluna] = 0;
+		}
+	}
+	matriz[raiz][1] = -1;
+	dfs_recursivo(lista, raiz, matriz);
+
+	printf("\n\n Árvore gerada.\n\n");
+	for (int linha = 0; linha < num_nodes; linha++) {
+        printf("Vertice: %d - antecessor: %d\n", linha, matriz[linha][1]);
+    }
+}
+
 
 void busca_grafo_simples(nodes *list,int num_nodes) {
-	int opcao;
+	int opcao, raiz;;
 	printf("\n");
 	printf("1. exibir o grafo. \n2. para BFS. \n3. para DFS. \n0. para sair.\nDigite uma das opções acima: ");
 	scanf("%d", &opcao);
@@ -225,7 +262,6 @@ void busca_grafo_simples(nodes *list,int num_nodes) {
 				exibir_list(list, num_nodes);
 			}
 			if (opcao == 2) {
-				int raiz;
 				printf("\n\nGrafo originalmente armazenado.\n\n");
 				exibir_list(list, num_nodes);
 				printf("Escolha o nó raiz: ");
@@ -236,6 +272,9 @@ void busca_grafo_simples(nodes *list,int num_nodes) {
 			if (opcao == 3) {
 				printf("\n\nGrafo originalmente armazenado.\n\n");
 				exibir_list(list, num_nodes);
+				printf("Escolha o nó raiz: ");
+				scanf("%d", &raiz);
+				dfs_busca(list, raiz, num_nodes);
 				//DFS
 			}
 		}
