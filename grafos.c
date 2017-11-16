@@ -3,6 +3,8 @@
 #include <time.h>
 #include <stdlib.h>
 
+#define MAXVALOR 999;
+
 int num_nodes = 0;
 
 //Estrutura de armazenamento para armazenar o grafo.
@@ -134,6 +136,169 @@ void exibir_list(nodes *lista, int num_nodes) {
 		}
 		printf("\n");
 	}
+}
+
+void inserir_aresta_peso(nodes *list, int node_adjacente, int peso) {
+	nodes *aux;
+	nodes *tmp;
+
+	aux = (nodes*) malloc((int)sizeof(nodes));
+	aux->vertice = node_adjacente;
+	aux->peso = peso;
+	aux->prox = NULL;
+	list->vertice++;
+	if(list->prox == NULL)
+	list->prox = aux;
+	else {
+		tmp = list->prox;
+		if (tmp->vertice > node_adjacente) {
+			aux->prox = tmp;
+			list->prox = aux;
+		}
+		else if (tmp->prox == NULL) {
+			aux->prox = tmp->prox;
+			tmp->prox = aux;
+		}
+		else {
+			while((tmp->prox != NULL) &&(tmp->prox->vertice < node_adjacente)) {
+				tmp = tmp->prox;
+			}
+			aux->prox = tmp->prox;
+			tmp->prox = aux;
+		}
+	}
+}
+
+void create_list_peso(nodes *list, int num_nodes, float sparsity) {
+	int peso;
+	for (int node = 0; node < num_nodes; node++) {
+		for (int node_adjacente = (node + 1); node_adjacente < num_nodes; node_adjacente++) {
+			if(create_binary(sparsity) == 1) {
+				peso = rand() % 200;
+				inserir_aresta_peso(&list[node], node_adjacente, peso);
+				inserir_aresta_peso(&list[node_adjacente], node, peso);
+			}
+		}
+	}
+}
+
+void exibir_list_peso(nodes *lista, int num_nodes) {
+	nodes * tmp;
+	for(int index = 0; index < num_nodes; index++) {
+		tmp = lista[index].prox;
+		printf("%2d: (%d) -> ", index, lista[index].vertice);
+		while (tmp != NULL) {
+			printf("%d  ", tmp->vertice);
+			printf("Peso: %d  -> ", tmp->peso);
+			tmp = tmp->prox;
+		}
+		printf("\n");
+	}
+}
+
+void Dantzig_busca(nodes *(*lista), int num_nodes, int raiz) {
+	int matriz[num_nodes][3];
+	int aux[num_nodes][num_nodes];
+	nodes *tmp;
+	nodes *tmp2;
+
+	for (int linha = 0; linha < num_nodes; linha++) {
+		printf("PASSOU AQUI");
+		for (int coluna = 0; coluna < num_nodes; coluna++) {
+			matriz[linha][coluna] = MAXVALOR;
+		}
+	}
+	for (int linha = 0; linha < num_nodes; linha++) {
+		for (int coluna = 0; coluna < 3; coluna++) {
+			matriz[linha][coluna] = 0;
+		}
+		matriz[linha][1] = MAXVALOR; //valor de infinito.
+	}
+	matriz[raiz][2] = -1;  //insere o antecessor.
+	matriz[raiz][1] = 0;  //insere custo zero na raiz.
+	matriz[raiz][0] = 1; //insere a tag de fechado.  
+	
+	for (int index = 0; index < num_nodes; index++) {
+		
+		tmp = lista[raiz];
+		tmp2 = lista[raiz];
+		while (tmp2->prox != NULL) {
+			aux[index][tmp2->vertice] = tmp2->peso;
+			tmp2 = tmp2->prox;
+		}
+		while (tmp->prox != NULL) {
+			if (matriz[tmp->vertice][0] == 0 && matriz[raiz][0] == 1) {
+				if (matriz[raiz][1] + tmp->peso < matriz[tmp->vertice][1]) {
+					matriz[tmp->vertice][1] = matriz[raiz][1] + tmp->peso;
+					matriz[tmp->vertice][2] = raiz;
+				}
+			}
+			tmp = tmp->prox;
+		}
+		int menor = MAXVALOR;
+		for (int linha = 0; linha < index; linha++) {
+			for (int coluna = 0; coluna < num_nodes; coluna++) {
+				if (menor > aux[linha][coluna] && matriz[coluna][0] == 0) {
+					menor = aux[linha][coluna];
+					raiz = coluna;
+				}
+			}
+		}
+		matriz[raiz][0] = 1;
+		
+	}
+	
+	for (int linha = 0; linha < num_nodes; linha++) {
+		if (linha == 1) {
+			printf("|Vertice | Antecessor | Custo|");
+		}
+		printf("|   %d   |     %d     |  %d  |", linha, matriz[raiz][2], matriz[raiz][1]); 
+	}
+	
+}
+
+
+void busca_grafo_peso(nodes *list,int num_nodes){
+	int opcao, raiz;;
+	printf("\n");
+	printf("1. exibir o grafo. \n2. para DANTZIG. \n3. para DIJKSTRA. \n4. para PRIM. \n5. para KRUSKAL\n0. para sair.\nDigite uma das opções acima: ");
+	scanf("%d", &opcao);
+	do {
+		if (opcao != 0) {
+			if (opcao == 1) {
+				exibir_list_peso(list, num_nodes);
+			}
+			if (opcao == 2) {
+				printf("\n\nGrafo originalmente armazenado.\n\n");
+				exibir_list(list, num_nodes);
+				printf("Escolha o nó raiz: ");
+				scanf("%d", &raiz);
+				Dantzig_busca(&list, num_nodes, raiz);
+				//Dantzig
+			}
+			if (opcao == 3) {
+				printf("\n\nGrafo originalmente armazenado.\n\n");
+				exibir_list_peso(list, num_nodes);
+				printf("Escolha o nó raiz: ");
+				scanf("%d", &raiz);
+				//disjkstra
+			}
+			if (opcao == 4) {
+				printf("\n\nGrafo originalmente armazenado.\n\n");
+				exibir_list_peso(list, num_nodes);
+				printf("Escolha o nó raiz: ");
+				scanf("%d", &raiz);
+				//PRIM
+			}
+			if (opcao == 3) {
+				printf("\n\nGrafo originalmente armazenado.\n\n");
+				exibir_list_peso(list, num_nodes);
+				printf("Escolha o nó raiz: ");
+				scanf("%d", &raiz);
+				//KRUSKAL
+			}
+		}
+	} while (opcao == 0);
 }
 
 //Código para as buscas.
@@ -281,10 +446,6 @@ void busca_grafo_simples(nodes *list,int num_nodes) {
 	} while (opcao == 0);
 }
 
-
-
-
-
 int main() {
 	srand((unsigned int)time(NULL));
 	int opcao = 0;
@@ -322,6 +483,14 @@ int main() {
 			}
 			if (opcao == 2) {
 				//Grafos com peso
+				num_nodes = tamanho(num_nodes);
+				sparsity = 0.5;
+				for(int i=0; i < num_nodes; i++){
+					list[i].vertice = 0;
+					list[i].prox = NULL;
+				}
+				create_list_peso(list, num_nodes, sparsity);
+				busca_grafo_peso(list, num_nodes);
 			}
 			else {
 				opcao = menu(opcao);
