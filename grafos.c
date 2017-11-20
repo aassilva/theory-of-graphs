@@ -322,7 +322,7 @@ void disjkstra_busca(nodes *lista, int num_nodes, int raiz) {
 	
 }
 
-void busca_grafo_peso(nodes *list,int num_nodes){
+void busca_grafo_peso(nodes *list,int num_nodes) {
 	int opcao, raiz;;
 	printf("\n");
 	printf("1. exibir o grafo. \n2. para DANTZIG. \n3. para DIJKSTRA NORMAL. \n4. para DIJKSTRA HEAP. \n5. para PRIM. \n6. para KRUSKAL\n0. para sair.\nDigite uma das opções acima: ");
@@ -374,7 +374,7 @@ void busca_grafo_peso(nodes *list,int num_nodes){
 }
 
 //Código para as buscas.
-void insere_fila(lista_busca **fila, int raiz){
+void insere_fila(lista_busca **fila, int raiz) {
 	lista_busca *novo = (lista_busca*) malloc((int)sizeof(lista_busca));
 	novo->prox = NULL;
 	novo->num = raiz;
