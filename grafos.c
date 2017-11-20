@@ -196,7 +196,7 @@ void exibir_list_peso(nodes *lista, int num_nodes) {
 	}
 }
 
-void Dantzig_busca(nodes *lista, int num_nodes, int raiz) {
+void dantzig_busca(nodes *lista, int num_nodes, int raiz) {
 	int matriz[num_nodes][3];
 	int aux[num_nodes][num_nodes];
 	nodes *tmp;
@@ -269,11 +269,63 @@ void Dantzig_busca(nodes *lista, int num_nodes, int raiz) {
 	
 }
 
+void disjkstra_busca(nodes *lista, int num_nodes, int raiz) {
+	int matriz[num_nodes][3];
+	nodes *tmp;
+	
+	for (int linha = 0; linha < num_nodes; linha++) {
+		for (int coluna = 0; coluna < 3; coluna++) {
+			matriz[linha][coluna] = 0;
+		}
+		matriz[linha][1] = MAXVALOR; //valor de infinito.
+	}
+	
+	matriz[raiz][2] = -1;  //insere o antecessor.
+	matriz[raiz][1] = 0;  //insere custo zero na raiz.
+	matriz[raiz][0] = 1; //insere a tag de fechado.  
+	
+	for (int index = 0; index < num_nodes; index++) {
+		
+		tmp = &(lista[raiz]);	
+		
+		tmp = tmp->prox;
+		while (tmp != NULL) {
+			if (matriz[tmp->vertice][0] == 0 && matriz[raiz][0] == 1) {
+				if (matriz[raiz][1] + tmp->peso < matriz[tmp->vertice][1]) {
+					matriz[tmp->vertice][1] = matriz[raiz][1] + tmp->peso;
+					matriz[tmp->vertice][2] = raiz;
+				}
+			}
+			tmp = tmp->prox;
+		}
+		
+		
+		
+		
+		int menor = MAXVALOR;
+		for (int linha = 0; linha < num_nodes; linha++) {
+			if (menor > matriz[linha][1] && matriz[linha][0] == 0) {
+				menor = matriz[linha][1];
+				raiz = linha;
+			}
+		}
+		matriz[raiz][0] = 1;
+		
+	}
+	
+	for (int linha = 0; linha < num_nodes; linha++) {
+		if (linha == 0) {
+			printf("|Vertice | Antecessor | Custo|\n");
+		}
+		printf("|   %d   |     %d     |  %d  |\n", linha, matriz[linha][2], matriz[linha][1]); 
+	}
+	
+}
 
 void busca_grafo_peso(nodes *list,int num_nodes){
 	int opcao, raiz;;
 	printf("\n");
-	printf("1. exibir o grafo. \n2. para DANTZIG. \n3. para DIJKSTRA. \n4. para PRIM. \n5. para KRUSKAL\n0. para sair.\nDigite uma das opções acima: ");
+	printf("1. exibir o grafo. \n2. para DANTZIG. \n3. para DIJKSTRA NORMAL. \n4. para DIJKSTRA HEAP. \n5. para PRIM. \n6. para KRUSKAL\n0. para sair.\nDigite uma das opções acima: ");
 	scanf("%d", &opcao);
 	do {
 		if (opcao != 0) {
@@ -285,7 +337,7 @@ void busca_grafo_peso(nodes *list,int num_nodes){
 				exibir_list_peso(list, num_nodes);
 				printf("Escolha o nó raiz: ");
 				scanf("%d", &raiz);
-				Dantzig_busca(list, num_nodes, raiz);
+				dantzig_busca(list, num_nodes, raiz);
 				//Dantzig
 			}
 			if (opcao == 3) {
@@ -293,16 +345,24 @@ void busca_grafo_peso(nodes *list,int num_nodes){
 				exibir_list_peso(list, num_nodes);
 				printf("Escolha o nó raiz: ");
 				scanf("%d", &raiz);
-				//disjkstra
+				disjkstra_busca(list, num_nodes, raiz);
+				//disjkstra normal
 			}
 			if (opcao == 4) {
 				printf("\n\nGrafo originalmente armazenado.\n\n");
 				exibir_list_peso(list, num_nodes);
 				printf("Escolha o nó raiz: ");
 				scanf("%d", &raiz);
+				//disjkstra heap
+			}
+			if (opcao == 5) {
+				printf("\n\nGrafo originalmente armazenado.\n\n");
+				exibir_list_peso(list, num_nodes);
+				printf("Escolha o nó raiz: ");
+				scanf("%d", &raiz);
 				//PRIM
 			}
-			if (opcao == 3) {
+			if (opcao == 6) {
 				printf("\n\nGrafo originalmente armazenado.\n\n");
 				exibir_list_peso(list, num_nodes);
 				printf("Escolha o nó raiz: ");
