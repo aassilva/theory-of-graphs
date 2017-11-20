@@ -196,37 +196,45 @@ void exibir_list_peso(nodes *lista, int num_nodes) {
 	}
 }
 
-void Dantzig_busca(nodes *(*lista), int num_nodes, int raiz) {
+void Dantzig_busca(nodes *lista, int num_nodes, int raiz) {
 	int matriz[num_nodes][3];
 	int aux[num_nodes][num_nodes];
 	nodes *tmp;
 	nodes *tmp2;
 
 	for (int linha = 0; linha < num_nodes; linha++) {
-		printf("PASSOU AQUI");
 		for (int coluna = 0; coluna < num_nodes; coluna++) {
-			matriz[linha][coluna] = MAXVALOR;
+			aux[linha][coluna] = MAXVALOR;
 		}
 	}
+	
 	for (int linha = 0; linha < num_nodes; linha++) {
 		for (int coluna = 0; coluna < 3; coluna++) {
 			matriz[linha][coluna] = 0;
 		}
 		matriz[linha][1] = MAXVALOR; //valor de infinito.
 	}
+	
 	matriz[raiz][2] = -1;  //insere o antecessor.
 	matriz[raiz][1] = 0;  //insere custo zero na raiz.
 	matriz[raiz][0] = 1; //insere a tag de fechado.  
 	
 	for (int index = 0; index < num_nodes; index++) {
 		
-		tmp = lista[raiz];
-		tmp2 = lista[raiz];
-		while (tmp2->prox != NULL) {
+		tmp = &(lista[raiz]);
+		tmp2 = &(lista[raiz]);
+		
+		tmp2 = tmp2->prox;
+		
+		while (tmp2 != NULL) {
 			aux[index][tmp2->vertice] = tmp2->peso;
 			tmp2 = tmp2->prox;
 		}
-		while (tmp->prox != NULL) {
+		
+		
+		
+		tmp = tmp->prox;
+		while (tmp != NULL) {
 			if (matriz[tmp->vertice][0] == 0 && matriz[raiz][0] == 1) {
 				if (matriz[raiz][1] + tmp->peso < matriz[tmp->vertice][1]) {
 					matriz[tmp->vertice][1] = matriz[raiz][1] + tmp->peso;
@@ -235,8 +243,12 @@ void Dantzig_busca(nodes *(*lista), int num_nodes, int raiz) {
 			}
 			tmp = tmp->prox;
 		}
+		
+		
+		
+		
 		int menor = MAXVALOR;
-		for (int linha = 0; linha < index; linha++) {
+		for (int linha = 0; linha < index+1; linha++) {
 			for (int coluna = 0; coluna < num_nodes; coluna++) {
 				if (menor > aux[linha][coluna] && matriz[coluna][0] == 0) {
 					menor = aux[linha][coluna];
@@ -249,10 +261,10 @@ void Dantzig_busca(nodes *(*lista), int num_nodes, int raiz) {
 	}
 	
 	for (int linha = 0; linha < num_nodes; linha++) {
-		if (linha == 1) {
-			printf("|Vertice | Antecessor | Custo|");
+		if (linha == 0) {
+			printf("|Vertice | Antecessor | Custo|\n");
 		}
-		printf("|   %d   |     %d     |  %d  |", linha, matriz[raiz][2], matriz[raiz][1]); 
+		printf("|   %d   |     %d     |  %d  |\n", linha, matriz[linha][2], matriz[linha][1]); 
 	}
 	
 }
@@ -270,10 +282,10 @@ void busca_grafo_peso(nodes *list,int num_nodes){
 			}
 			if (opcao == 2) {
 				printf("\n\nGrafo originalmente armazenado.\n\n");
-				exibir_list(list, num_nodes);
+				exibir_list_peso(list, num_nodes);
 				printf("Escolha o nó raiz: ");
 				scanf("%d", &raiz);
-				Dantzig_busca(&list, num_nodes, raiz);
+				Dantzig_busca(list, num_nodes, raiz);
 				//Dantzig
 			}
 			if (opcao == 3) {
