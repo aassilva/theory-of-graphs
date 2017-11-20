@@ -269,6 +269,128 @@ void dantzig_busca(nodes *lista, int num_nodes, int raiz) {
 	
 }
 
+void add_heap(int heap[], int tamanho, int raiz, int ultimo, int fechado[]) {
+	heap[tamanho] = raiz;
+	fechado[raiz] = 1;
+	tamanho = tamanho + 1;
+	ultimo = tamanho -1;
+}
+
+int nova_raiz(int ultimo, int tamanho, int heap[], int custo[]) {
+	if (tamanho == 1) {
+		ultimo = -1;
+		tamanho = 0;
+		return heap[0];
+	} 
+	else {
+		int atualizar = 0;
+		tamanho = tamanho -1;
+		int raiz = heap[0];
+		heap[0] = heap[ultimo];
+		ultimo = ultimo -1;
+		if (custo[0] > custo [1]) {
+			int prim = 0, prox = 1;
+			while (atualizar != 1) {
+				int aux = heap[prim];
+				heap[prim] = heap[prox];
+				heap[prox] = aux;
+				prim = prox;
+				prox = prox + 2;
+				if (custo[prim] <= custo [prox]) {
+					atualizar = 1;
+				}
+					
+			}
+		}
+		
+		if (custo[0] > custo [2]) {
+			int prim = 0, prox = 2;
+			while (atualizar != 1) {
+				int aux = heap[prim];
+				heap[prim] = heap[prox];
+				heap[prox] = aux;
+				prim = prox;
+				prox = prox + 2;
+				if (custo[prim] <= custo [prox]) {
+					atualizar = 1;
+				}
+					
+			}
+		}
+		return raiz;
+	}
+}
+
+void subir_heap (int heap[], int tmp, int custo[]) {
+	int aux, index = 0, flag = 0, temp;
+	while (heap[index] != tmp) {
+		index++;
+	}
+	while (flag != 1) {
+		aux = (index - 1) / 2;
+		if (custo[aux] > custo[index]) {
+			temp = heap[aux];
+			heap[aux] = heap[index];
+			heap[index] = temp;
+			index = aux;
+		} 
+		else {
+			flag = 1;
+		}
+	}
+}
+
+void disjkstra_heap_busca(nodes *lista, int num_nodes, int raiz){
+	int antecessor[num_nodes], custo[num_nodes], tamanho = 0, heap[num_nodes], ultimo = 0, fechado[num_nodes];
+	nodes *tmp;
+	
+	for (int index = 0; index < num_nodes; index++) {
+		antecessor[index] = 0;
+		custo[index] = MAXVALOR;
+		heap[index] = 0;
+		fechado[index] = 0;
+	}
+	
+	add_heap(heap, tamanho, raiz, ultimo, fechado);
+	
+	antecessor[raiz] = -1;
+	custo[raiz] = 0;
+	
+	while (tamanho == 0) {
+		if (tamanho == 0) {
+			break;
+		}
+		else {
+			raiz = nova_raiz(ultimo, tamanho, heap, custo);
+			tmp = &lista[raiz];
+			tmp = tmp->prox;
+			
+			while (tmp != NULL) {
+				if (custo[tmp->vertice] > custo[raiz] + tmp->peso) {
+					custo[tmp->vertice] = custo[raiz] + tmp->peso;
+					antecessor[tmp->vertice] = raiz;
+				}
+				if (fechado[tmp->vertice] == 0 ) {
+					add_heap(heap, tamanho, tmp->vertice, ultimo, fechado);
+				}
+				else {
+					subir_heap(heap, tmp->vertice, custo);
+				}
+				tmp = tmp->prox;
+			}
+			
+		}
+		
+	}
+	
+	for (int linha = 0; linha < num_nodes; linha++) {
+		if (linha == 0) {
+			printf("|Vertice | Antecessor | Custo|\n");
+		}
+		printf("|   %d   |     %d     |  %d  |\n", linha, antecessor[linha], custo[linha]); 
+	}
+}
+
 void disjkstra_busca(nodes *lista, int num_nodes, int raiz) {
 	int matriz[num_nodes][3];
 	nodes *tmp;
@@ -353,6 +475,7 @@ void busca_grafo_peso(nodes *list,int num_nodes) {
 				exibir_list_peso(list, num_nodes);
 				printf("Escolha o nó raiz: ");
 				scanf("%d", &raiz);
+				disjkstra_heap_busca(list, num_nodes, raiz);
 				//disjkstra heap
 			}
 			if (opcao == 5) {
