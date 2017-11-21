@@ -264,7 +264,7 @@ void dantzig_busca(nodes *lista, int num_nodes, int raiz) {
 		if (linha == 0) {
 			printf("|Vertice | Antecessor | Custo|\n");
 		}
-		printf("|   %d   |     %d     |  %d  |\n", linha, matriz[linha][2], matriz[linha][1]); 
+		printf("| %6d | %10d | %4d |\n", linha, matriz[linha][2], matriz[linha][1]); 
 	}
 	
 }
@@ -382,7 +382,7 @@ void disjkstra_heap_busca(nodes *lista, int num_nodes, int raiz){
 		if (linha == 0) {
 			printf("|Vertice | Antecessor | Custo|\n");
 		}
-		printf("|   %d   |     %d     |  %d  |\n", linha, antecessor[linha], custo[linha]); 
+		printf("| %6d | %10d | %4d |\n", linha, antecessor[linha], custo[linha]); 
 	}
 }
 
@@ -434,7 +434,7 @@ void disjkstra_busca(nodes *lista, int num_nodes, int raiz) {
 		if (linha == 0) {
 			printf("|Vertice | Antecessor | Custo|\n");
 		}
-		printf("|   %d   |     %d     |  %d  |\n", linha, matriz[linha][2], matriz[linha][1]); 
+		printf("| %6d | %10d | %4d |\n", linha, matriz[linha][2], matriz[linha][1]); 
 	}
 	
 }
