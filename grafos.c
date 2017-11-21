@@ -3,7 +3,7 @@
 #include <time.h>
 #include <stdlib.h>
 
-#define MAXVALOR 999;
+#define MAXVALOR 214748364;
 
 int num_nodes = 0;
 
@@ -14,7 +14,7 @@ typedef struct no {
 	struct no *prox;
 } nodes;
 
-nodes list[10000];
+nodes list[214748364];
 
 //Estrutura de armazenamento para a implementação das buscas.
 typedef struct Node{
@@ -354,7 +354,6 @@ void disjkstra_heap_busca(nodes *lista, int num_nodes, int raiz){
 	}
 	
 	add_heap(heap, &tamanho, &raiz, &ultimo, fechado);
-	printf("tamanho: %d, ultimo: %d\n", tamanho, ultimo);
 	antecessor[raiz] = -1;
 	custo[raiz] = 0;
 	
