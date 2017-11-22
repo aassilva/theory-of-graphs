@@ -3,7 +3,7 @@
 #include <time.h>
 #include <stdlib.h>
 
-#define MAXVALOR 214748364;
+#define MAXVALOR 214748364
 
 int num_nodes = 0;
 
@@ -386,6 +386,59 @@ void disjkstra_heap_busca(nodes *lista, int num_nodes, int raiz){
 	}
 }
 
+void prim_busca(nodes *list, int num_nodes, int raiz) {
+	int antecessor[num_nodes], custo[num_nodes], fechado[num_nodes], k, custo_total = 0;
+	nodes *tmp;
+
+	
+	for (int index = 0; index < num_nodes; index++) {
+		antecessor[index] = 0;
+		custo[index] = MAXVALOR;
+		fechado[index] = 0;
+	}
+	custo[raiz] = 0;
+	antecessor[raiz] = -1;
+	fechado[raiz] = 1;
+	
+	
+	do {
+		tmp = &list[raiz];
+	
+		tmp = tmp->prox;
+	
+		while (tmp != NULL) {
+			if (custo[tmp->vertice] > tmp->peso) {
+				custo[tmp->vertice] = tmp->peso;
+				antecessor[tmp->vertice] = raiz;
+			}
+			printf("passou aqui 0\n");
+			printf("%d\n", tmp->vertice);
+			tmp = tmp->prox;
+		}
+		printf("passou aqui 1\n");
+		for (int index = 0; index < (num_nodes - 1); index++) {
+			if (index == 0 && fechado[0] == 0) {
+				raiz = 0;
+				
+			}
+			if (custo[index] < custo[index + 1] && fechado[index] == 0) {
+				raiz = index;
+			}
+		}
+		fechado[raiz] = 1;
+		k = k + 1;
+	} while(custo[raiz] != MAXVALOR || k != (num_nodes - 1));
+	
+	for (int linha = 0; linha < num_nodes; linha++) {
+		if (linha == 0) {
+			printf("|Vertice | Antecessor | Custo|\n");
+		}
+		printf("| %6d | %10d | %4d |\n", linha, antecessor[linha], custo[linha]); 
+		custo_total = custo_total + custo[linha];
+	}
+	printf("Custo da AGM é: %d\n", custo_total); 
+}
+
 void disjkstra_busca(nodes *lista, int num_nodes, int raiz) {
 	int matriz[num_nodes][3];
 	nodes *tmp;
@@ -478,6 +531,7 @@ void busca_grafo_peso(nodes *list,int num_nodes) {
 				exibir_list_peso(list, num_nodes);
 				printf("Escolha o nó raiz: ");
 				scanf("%d", &raiz);
+				prim_busca(list, num_nodes, raiz);
 				//PRIM
 			}
 			if (opcao == 6) {
