@@ -207,32 +207,32 @@ void dantzig_busca(nodes *lista, int num_nodes, int raiz) {
 			aux[linha][coluna] = MAXVALOR;
 		}
 	}
-	
+
 	for (int linha = 0; linha < num_nodes; linha++) {
 		for (int coluna = 0; coluna < 3; coluna++) {
 			matriz[linha][coluna] = 0;
 		}
 		matriz[linha][1] = MAXVALOR; //valor de infinito.
 	}
-	
+
 	matriz[raiz][2] = -1;  //insere o antecessor.
 	matriz[raiz][1] = 0;  //insere custo zero na raiz.
-	matriz[raiz][0] = 1; //insere a tag de fechado.  
-	
+	matriz[raiz][0] = 1; //insere a tag de fechado.
+
 	for (int index = 0; index < num_nodes; index++) {
-		
+
 		tmp = &(lista[raiz]);
 		tmp2 = &(lista[raiz]);
-		
+
 		tmp2 = tmp2->prox;
-		
+
 		while (tmp2 != NULL) {
 			aux[index][tmp2->vertice] = tmp2->peso;
 			tmp2 = tmp2->prox;
 		}
-		
-		
-		
+
+
+
 		tmp = tmp->prox;
 		while (tmp != NULL) {
 			if (matriz[tmp->vertice][0] == 0 && matriz[raiz][0] == 1) {
@@ -243,10 +243,10 @@ void dantzig_busca(nodes *lista, int num_nodes, int raiz) {
 			}
 			tmp = tmp->prox;
 		}
-		
-		
-		
-		
+
+
+
+
 		int menor = MAXVALOR;
 		for (int linha = 0; linha < index+1; linha++) {
 			for (int coluna = 0; coluna < num_nodes; coluna++) {
@@ -257,16 +257,16 @@ void dantzig_busca(nodes *lista, int num_nodes, int raiz) {
 			}
 		}
 		matriz[raiz][0] = 1;
-		
+
 	}
-	
+
 	for (int linha = 0; linha < num_nodes; linha++) {
 		if (linha == 0) {
 			printf("|Vertice | Antecessor | Custo|\n");
 		}
-		printf("| %6d | %10d | %4d |\n", linha, matriz[linha][2], matriz[linha][1]); 
+		printf("| %6d | %10d | %4d |\n", linha, matriz[linha][2], matriz[linha][1]);
 	}
-	
+
 }
 
 void add_heap(int *heap, int *tamanho, int *raiz, int *ultimo, int *fechado) {
@@ -281,7 +281,7 @@ int nova_raiz(int *ultimo, int *tamanho, int *heap, int *custo) {
 		*ultimo = -1;
 		*tamanho = 0;
 		return heap[0];
-	} 
+	}
 	else {
 		int atualizar = 0;
 		*tamanho = *tamanho -1;
@@ -299,10 +299,10 @@ int nova_raiz(int *ultimo, int *tamanho, int *heap, int *custo) {
 				if (custo[prim] <= custo [prox]) {
 					atualizar = 1;
 				}
-					
+
 			}
 		}
-		
+
 		if (custo[0] > custo [2]) {
 			int prim = 0, prox = 2;
 			while (atualizar != 1) {
@@ -314,7 +314,7 @@ int nova_raiz(int *ultimo, int *tamanho, int *heap, int *custo) {
 				if (custo[prim] <= custo [prox]) {
 					atualizar = 1;
 				}
-					
+
 			}
 		}
 		return raiz;
@@ -333,7 +333,7 @@ void subir_heap (int *heap, int *tmp, int *custo) {
 			heap[aux] = heap[index];
 			heap[index] = temp;
 			index = aux;
-		} 
+		}
 		else {
 			flag = 1;
 		}
@@ -345,23 +345,23 @@ void disjkstra_heap_busca(nodes *lista, int num_nodes, int raiz){
 	nodes *tmp;
 	tamanho = 0;
 	ultimo = 0;
-	
+
 	for (int index = 0; index < num_nodes; index++) {
 		antecessor[index] = 0;
 		custo[index] = MAXVALOR;
 		heap[index] = 0;
 		fechado[index] = 0;
 	}
-	
+
 	add_heap(heap, &tamanho, &raiz, &ultimo, fechado);
 	antecessor[raiz] = -1;
 	custo[raiz] = 0;
-	
+
 	while (tamanho != -1) {
 			raiz = nova_raiz(&ultimo, &tamanho, heap, custo);
 			tmp = &lista[raiz];
 			tmp = tmp->prox;
-			
+
 			while (tmp != NULL) {
 				if (custo[tmp->vertice] > custo[raiz] + tmp->peso) {
 					custo[tmp->vertice] = custo[raiz] + tmp->peso;
@@ -375,14 +375,14 @@ void disjkstra_heap_busca(nodes *lista, int num_nodes, int raiz){
 				}
 				tmp = tmp->prox;
 			}
-		
+
 	}
-	
+
 	for (int linha = 0; linha < num_nodes; linha++) {
 		if (linha == 0) {
 			printf("|Vertice | Antecessor | Custo|\n");
 		}
-		printf("| %6d | %10d | %4d |\n", linha, antecessor[linha], custo[linha]); 
+		printf("| %6d | %10d | %4d |\n", linha, antecessor[linha], custo[linha]);
 	}
 }
 
@@ -390,7 +390,7 @@ void prim_busca(nodes *list, int num_nodes, int raiz) {
 	int antecessor[num_nodes], custo[num_nodes], fechado[num_nodes], k, custo_total = 0;
 	nodes *tmp;
 
-	
+
 	for (int index = 0; index < num_nodes; index++) {
 		antecessor[index] = 0;
 		custo[index] = MAXVALOR;
@@ -399,27 +399,24 @@ void prim_busca(nodes *list, int num_nodes, int raiz) {
 	custo[raiz] = 0;
 	antecessor[raiz] = -1;
 	fechado[raiz] = 1;
-	
-	
+
+
 	do {
 		tmp = &list[raiz];
-	
+
 		tmp = tmp->prox;
-	
+
 		while (tmp != NULL) {
 			if (custo[tmp->vertice] > tmp->peso) {
 				custo[tmp->vertice] = tmp->peso;
 				antecessor[tmp->vertice] = raiz;
 			}
-			printf("passou aqui 0\n");
-			printf("%d\n", tmp->vertice);
 			tmp = tmp->prox;
 		}
-		printf("passou aqui 1\n");
 		for (int index = 0; index < (num_nodes - 1); index++) {
 			if (index == 0 && fechado[0] == 0) {
 				raiz = 0;
-				
+
 			}
 			if (custo[index] < custo[index + 1] && fechado[index] == 0) {
 				raiz = index;
@@ -427,37 +424,37 @@ void prim_busca(nodes *list, int num_nodes, int raiz) {
 		}
 		fechado[raiz] = 1;
 		k = k + 1;
-	} while(custo[raiz] != MAXVALOR || k != (num_nodes - 1));
-	
+	} while(custo[raiz] == MAXVALOR || k != (num_nodes - 1));
+
 	for (int linha = 0; linha < num_nodes; linha++) {
 		if (linha == 0) {
 			printf("|Vertice | Antecessor | Custo|\n");
 		}
-		printf("| %6d | %10d | %4d |\n", linha, antecessor[linha], custo[linha]); 
+		printf("| %6d | %10d | %4d |\n", linha, antecessor[linha], custo[linha]);
 		custo_total = custo_total + custo[linha];
 	}
-	printf("Custo da AGM é: %d\n", custo_total); 
+	printf("Custo da AGM é: %d\n", custo_total);
 }
 
 void disjkstra_busca(nodes *lista, int num_nodes, int raiz) {
 	int matriz[num_nodes][3];
 	nodes *tmp;
-	
+
 	for (int linha = 0; linha < num_nodes; linha++) {
 		for (int coluna = 0; coluna < 3; coluna++) {
 			matriz[linha][coluna] = 0;
 		}
 		matriz[linha][1] = MAXVALOR; //valor de infinito.
 	}
-	
+
 	matriz[raiz][2] = -1;  //insere o antecessor.
 	matriz[raiz][1] = 0;  //insere custo zero na raiz.
-	matriz[raiz][0] = 1; //insere a tag de fechado.  
-	
+	matriz[raiz][0] = 1; //insere a tag de fechado.
+
 	for (int index = 0; index < num_nodes; index++) {
-		
-		tmp = &(lista[raiz]);	
-		
+
+		tmp = &(lista[raiz]);
+
 		tmp = tmp->prox;
 		while (tmp != NULL) {
 			if (matriz[tmp->vertice][0] == 0 && matriz[raiz][0] == 1) {
@@ -468,10 +465,10 @@ void disjkstra_busca(nodes *lista, int num_nodes, int raiz) {
 			}
 			tmp = tmp->prox;
 		}
-		
-		
-		
-		
+
+
+
+
 		int menor = MAXVALOR;
 		for (int linha = 0; linha < num_nodes; linha++) {
 			if (menor > matriz[linha][1] && matriz[linha][0] == 0) {
@@ -480,16 +477,16 @@ void disjkstra_busca(nodes *lista, int num_nodes, int raiz) {
 			}
 		}
 		matriz[raiz][0] = 1;
-		
+
 	}
-	
+
 	for (int linha = 0; linha < num_nodes; linha++) {
 		if (linha == 0) {
 			printf("|Vertice | Antecessor | Custo|\n");
 		}
-		printf("| %6d | %10d | %4d |\n", linha, matriz[linha][2], matriz[linha][1]); 
+		printf("| %6d | %10d | %4d |\n", linha, matriz[linha][2], matriz[linha][1]);
 	}
-	
+
 }
 
 void busca_grafo_peso(nodes *list,int num_nodes) {
@@ -556,7 +553,7 @@ void insere_fila(lista_busca **fila, int raiz) {
 		*fila = novo;
 	} else {
 		while (tmp->prox != NULL) tmp = tmp->prox;
-		
+
 		tmp->prox = novo;
 	}
 
@@ -565,9 +562,9 @@ void insere_fila(lista_busca **fila, int raiz) {
 void retira_node(lista_busca **fila) {
     lista_busca *tmp;
     tmp = *fila;
-    
+
     *fila = (*fila)->prox;
-    
+
     free(tmp);
 }
 
@@ -578,9 +575,9 @@ void mostra (lista_busca *fila){
 			fila = fila->prox;
 		}
 	} else printf ("VAZIO");
-	
+
 	printf ("\n\n");
-	
+
 }
 
 void bfs_busca(nodes *lista, int num_nodes, int raiz) {
@@ -609,7 +606,7 @@ void bfs_busca(nodes *lista, int num_nodes, int raiz) {
                 matriz[temp][0] = 1;  //teg.
                 matriz[temp][1] = vertice_selecionado; //antecessor.
             }
-            
+
             aux = aux->prox;
         }
         //mostra(fila);
@@ -632,12 +629,12 @@ void dfs_recursivo(nodes *lista, int raiz, int matriz[num_nodes][2]) {
 	while (tmp != NULL) {
 		printf("passou aqui");
 		if (matriz[tmp->vertice][0] == 0) {
-			
+
 			aux = tmp->vertice;
 			matriz[aux][1] = raiz;
 			matriz[aux][0] = 1;
 			dfs_recursivo(lista, tmp->vertice, matriz);
-			
+
 		}
 		tmp = tmp->prox;
 	}
