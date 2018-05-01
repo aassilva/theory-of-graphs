@@ -1,4 +1,4 @@
-# Teoria dos Grafos
+# Teoria dos Grafos 2017/2
 
 Repositório específico para implementação dos algoritmos em grafos.
 
